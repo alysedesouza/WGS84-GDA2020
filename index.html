@@ -194,4 +194,26 @@
             })
             .then(response => response.json())
             .then(data => {
-                var resultSection = document.get
+                var resultSection = document.getElementById("resultSectionWGS84");
+
+                // Display converted GDA2020 coordinates in the sidebar, rounding to 3 decimal places and on separate lines
+                var convertedGDA2020WGS84 = document.getElementById("convertedGDA2020WGS84");
+                convertedGDA2020WGS84.innerHTML = `Easting: ${data.converted_gda2020.easting.toFixed(3)}<br>Northing: ${data.converted_gda2020.northing.toFixed(3)}`;
+
+                resultSection.style.display = "block";
+
+                // Add marker to the map with converted GDA2020 coordinates in the popup
+                const marker = L.marker([data.converted_gda2020.northing, data.converted_gda2020.easting]).addTo(map);
+                marker.bindPopup(`Converted GDA2020 Coordinates:<br>Easting: ${data.converted_gda2020.easting}<br>Northing: ${data.converted_gda2020.northing}`).openPopup();
+
+                // Center map on new coordinates
+                map.setView([data.converted_gda2020.northing, data.converted_gda2020.easting], 15); // Adjust the zoom level as needed
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert("An error occurred while converting the coordinates.");
+            });
+        }
+    </script>
+</body>
+</html>
