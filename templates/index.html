@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+ 
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Coordinate Conversion</title>
+
+    <style>
+
+        body {
+
+            font-family: Arial, sans-serif;
+
+            margin: 0;
+
+            padding: 0;
+
+            background-color: #f4f4f4;
+
+        }
+
+ 
+
+        .container {
+
+            max-width: 600px;
+
+            margin: 20px auto;
+
+            padding: 20px;
+
+            background-color: #fff;
+
+            border-radius: 5px;
+
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+        }
+
+ 
+
+        h2 {
+
+            margin-top: 0;
+
+            color: #333;
+
+        }
+
+ 
+
+        label {
+
+            display: block;
+
+            margin-bottom: 5px;
+
+            font-weight: bold;
+
+        }
+
+ 
+
+        select,
+
+        input[type="text"] {
+
+            width: 100%;
+
+            padding: 8px;
+
+            margin-bottom: 10px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 4px;
+
+            box-sizing: border-box;
+
+        }
+
+ 
+
+        button {
+
+            background-color: #007bff;
+
+            color: #fff;
+
+            padding: 10px 20px;
+
+            border: none;
+
+            border-radius: 4px;
+
+            cursor: pointer;
+
+        }
+
+ 
+
+        button:hover {
+
+            background-color: #0056b3;
+
+        }
+
+ 
+
+        /* Added styles for result display */
+
+        .result {
+
+            margin-top: 20px;
+
+            padding: 10px;
+
+            background-color: #f9f9f9;
+
+            border: 1px solid #ccc;
+
+            border-radius: 4px;
+
+        }
+
+ 
+
+        .result h3 {
+
+            margin-top: 0;
+
+            color: #007bff;
+
+        }
+
+    </style>
+
+</head>
+
+ 
+
+<body>
+
+    <div class="container">
+
+        <h2>GDA94 to GDA20 conversion</h2>
+
+ 
+
+        <label for="zone">Select a Zone:</label>
+
+        <select id="zone">
+
+            <option value="49">Zone 49</option>
+
+            <option value="50">Zone 50</option>
+
+            <option value="51">Zone 51</option>
+
+            <option value="52">Zone 52</option>
+
+            <option value="53">Zone 53</option>
+
+            <option value="54">Zone 54</option>
+
+            <option value="55">Zone 55</option>
+
+            <option value="56">Zone 56</option>
+
+        </select>
+
+ 
+
+        <label for="Easting">Easting:</label>
+
+        <input type="text" id="Easting">
+
+ 
+
+        <label for="Northing">Northing:</label>
+
+        <input type="text" id="Northing">
+
+ 
+
+        <button onclick="showSelectedNumbers()">Submit</button>
+
+ 
+
+        <!-- Result Display Section -->
+
+        <div class="result" id="resultSection" style="display: none;">
+
+            <h3>Converted Values</h3>
+
+            <p id="result"></p>
+
+        </div>
+
+    </div>
+
+ 
+
+    <script>
+
+        function showSelectedNumbers() {
+            var zoneElement = document.getElementById("zone");
+            var selectedZone = zoneElement.value;
+
+            var EastingInput = document.getElementById("Easting");
+            var Easting = EastingInput.value.trim(); // Trim any whitespace
+
+            var NorthingInput = document.getElementById("Northing");
+            var Northing = NorthingInput.value.trim(); // Trim any whitespace
+
+            fetch('/convert_coordinates', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ zone: selectedZone, eastings: Easting, northings: Northing }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                var resultSection = document.getElementById("resultSection");
+                var resultParagraph = document.getElementById("result");
+
+                resultParagraph.textContent = `Transformed Easting: ${data.transformed_easting}, Transformed Northing: ${data.transformed_northing}`;
+                resultSection.style.display = "block";
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+    </script>
+
+</body>
+
+ 
+
+</html>
