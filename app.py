@@ -1,31 +1,10 @@
 from flask import Flask, request, jsonify, render_template
 from pyproj import Transformer
- 
-# # Define source and destination CRS codes
- 
-# zone = int(input("enter in the zone, 49-56 "))
-
-# source_crs = 28300+zone
-# destination_crs = 7800+zone
-
-# # Create a Transformer object with the specified CRS
-# transformer = Transformer.from_crs(source_crs, destination_crs)
-
-# # Prompt the user to enter the eastings and northings
-# eastings = float(input("Enter the eastings: "))
- 
-# northings = float(input("Enter the northings: "))
-
-# Perform the transformation
-# transformed_point = transformer.transform(eastings, northings)
- 
-# print("Transformed point:", transformed_point)
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    # Renders the index.html template
     return render_template('index.html')
 
 @app.route('/convert_coordinates', methods=['POST'])
@@ -35,15 +14,27 @@ def convert_coordinates():
     eastings = float(data['eastings'])
     northings = float(data['northings'])
 
+    # Define source and destination CRS codes for GDA94 to GDA2020 conversion
     source_crs = 28300 + zone
     destination_crs = 7800 + zone
 
-    transformer = Transformer.from_crs(source_crs, destination_crs)
-    transformed_point = transformer.transform(eastings, northings)
+    # Perform GDA94 to GDA2020 conversion
+    transformer_gda94_to_gda2020 = Transformer.from_crs(source_crs, destination_crs)
+    transformed_point_gda2020 = transformer_gda94_to_gda2020.transform(eastings, northings)
+
+    # Convert GDA2020 coordinates to WGS84 lat-long
+    transformer_gda2020_to_wgs84 = Transformer.from_crs(destination_crs, 4326)
+    wgs84_lat_long = transformer_gda2020_to_wgs84.transform(transformed_point_gda2020[0], transformed_point_gda2020[1])
 
     return jsonify({
-        'transformed_easting': transformed_point[0],
-        'transformed_northing': transformed_point[1]
+        'converted_gda2020': {
+            'easting': transformed_point_gda2020[0],
+            'northing': transformed_point_gda2020[1]
+        },
+        'wgs84_lat_long': {
+            'latitude': wgs84_lat_long[0],
+            'longitude': wgs84_lat_long[1]
+        }
     })
 
 if __name__ == '__main__':
