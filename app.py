@@ -14,22 +14,18 @@ def convert_coordinates():
     latitude = float(data['latitude'])
     longitude = float(data['longitude'])
 
-    # Define source CRS (WGS84) and destination CRS (GDA2020 for the specified zone)
+    # Define source and destination CRS codes for WGS84 to GDA2020 conversion
     source_crs = 4326
     destination_crs = 7800 + zone
 
     # Perform WGS84 to GDA2020 conversion
-    transformer_wgs84_to_gda2020 = Transformer.from_crs(source_crs, destination_crs, always_xy=True)
-    transformed_point_gda2020 = transformer_wgs84_to_gda2020.transform(longitude, latitude)
-
-    # Round the easting and northing to 3 decimal places
-    easting = round(transformed_point_gda2020[0], 3)
-    northing = round(transformed_point_gda2020[1], 3)
+    transformer_wgs84_to_gda2020 = Transformer.from_crs(source_crs, destination_crs)
+    transformed_point_gda2020 = transformer_wgs84_to_gda2020.transform(latitude, longitude)
 
     return jsonify({
         'converted_gda2020': {
-            'easting': easting,
-            'northing': northing
+            'easting': transformed_point_gda2020[0],
+            'northing': transformed_point_gda2020[1]
         }
     })
 
