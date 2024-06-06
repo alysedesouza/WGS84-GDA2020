@@ -15,17 +15,17 @@ def convert_coordinates():
     longitude = float(data['longitude'])
 
     # Define source and destination CRS codes for WGS84 to GDA2020 conversion
-    source_crs = 4326
-    destination_crs = 7800 + zone
+    source_crs = 'EPSG:4326'
+    destination_crs = f'EPSG:{7800 + zone}'
 
     # Perform WGS84 to GDA2020 conversion
-    transformer_wgs84_to_gda2020 = Transformer.from_crs(source_crs, destination_crs)
-    transformed_point_gda2020 = transformer_wgs84_to_gda2020.transform(latitude, longitude)
+    transformer_wgs84_to_gda2020 = Transformer.from_crs(source_crs, destination_crs, always_xy=True)
+    transformed_point_gda2020 = transformer_wgs84_to_gda2020.transform(longitude, latitude)
 
     return jsonify({
         'converted_gda2020': {
-            'easting': transformed_point_gda2020[0],
-            'northing': transformed_point_gda2020[1]
+            'easting': round(transformed_point_gda2020[0], 1),
+            'northing': round(transformed_point_gda2020[1], 1)
         }
     })
 
