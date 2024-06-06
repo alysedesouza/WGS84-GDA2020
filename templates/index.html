@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang='en'>
 <head>
@@ -25,12 +24,11 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
         }
-    .map-container {
-    flex-grow: 1;
-    height: 100vh;
-    width: 100%; /* Ensure the map container takes up the full width */
-}
-
+        .map-container {
+            flex-grow: 1;
+            height: 100vh;
+            width: 100%; /* Ensure the map container takes up the full width */
+        }
         h2 {
             margin-top: 0;
             color: #333;
@@ -96,11 +94,8 @@
         <input type="text" placeholder = "138.5986" id="Longitude">
         <button onclick="showSelectedNumbers()">Submit</button>
         <div class="result" id="resultSection" style="display: none;">
-        <!--   <h3>Converted Values</h3> --> 
-            <p id="result"></p> 
             <h3>Converted GDA2020 Coordinates</h3>
             <p id="convertedGDA2020"></p>
-            
         </div>
     </div>
     <div class="map-container">
@@ -123,7 +118,7 @@
         var Latitude = parseFloat(LatitudeInput.value.trim());
 
         var LongitudeInput = document.getElementById("Longitude");
-        var Longitude = parseFloat(Longitude.value.trim());
+        var Longitude = parseFloat(LongitudeInput.value.trim());
 
         if (isNaN(Latitude) || isNaN(Longitude)) {
             alert("Please enter valid numerical values for Latitude and Longitude.");
@@ -140,25 +135,18 @@
         .then(response => response.json())
         .then(data => {
             var resultSection = document.getElementById("resultSection");
-            var resultParagraph = document.getElementById("result");
-
-      //      resultParagraph.textContent = `Transformed Latitude: ${data.transformed_latitude}, Transformed Longitude: ${data.transformed_longitude}`;
             resultSection.style.display = "block";
 
-// Display converted GDA2020 coordinates in the sidebar, rounding to 3 decimal places and on separate lines
-var convertedGDA2020 = document.getElementById("convertedGDA2020");
-convertedGDA2020.innerHTML = `Easting: ${data.converted_gda2020.easting.toFixed(3)}<br>Northing: ${data.converted_gda2020.northing.toFixed(3)}`;
-
-
-
-
+            // Display converted GDA2020 coordinates in the sidebar, rounding to 3 decimal places and on separate lines
+            var convertedGDA2020 = document.getElementById("convertedGDA2020");
+            convertedGDA2020.innerHTML = `Easting: ${data.converted_gda2020.easting.toFixed(3)}<br>Northing: ${data.converted_gda2020.northing.toFixed(3)}`;
 
             // Add marker to the map with WGS84 lat-long and converted GDA2020 coordinates in the popup
-            const marker = L.marker(Latitude,longitude).addTo(map);
+            const marker = L.marker([Latitude, Longitude]).addTo(map);
             marker.bindPopup(`Converted GDA2020 Coordinates:<br>Easting: ${data.converted_gda2020.easting}<br>Northing: ${data.converted_gda2020.northing}`).openPopup();
 
             // Center map on new coordinates
-            map.setView([Latitude,longitude], 15); // Adjust the zoom level as needed
+            map.setView([Latitude, Longitude], 15); // Adjust the zoom level as needed
         })
         .catch((error) => {
             console.error('Error:', error);
@@ -166,7 +154,5 @@ convertedGDA2020.innerHTML = `Easting: ${data.converted_gda2020.easting.toFixed(
         });
     }
 </script>
-
-
 </body>
 </html>
