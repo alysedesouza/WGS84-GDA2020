@@ -16,7 +16,7 @@ def convert_coordinates():
 
     # Define source CRS (WGS84) and destination CRS (GDA2020 for the specified zone)
     source_crs = 'EPSG:4326'
-    destination_crs = f'EPSG:{7800 + zone}'  # Using string representation for clarity and compatibility
+    destination_crs = 7800 + zone
 
     # Perform WGS84 to GDA2020 conversion
     transformer_wgs84_to_gda2020 = Transformer.from_crs(source_crs, destination_crs, always_xy=True)
