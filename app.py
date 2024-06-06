@@ -20,17 +20,14 @@ def convert_coordinates():
 
     # Perform WGS84 to GDA2020 conversion
     transformer_wgs84_to_gda2020 = Transformer.from_crs(source_crs, destination_crs)
-    transformed_point_gda2020 = transformer_wgs84_to_gda2020.transform(longitude, latitude)
-
+    transformed_point_gda2020 = transformer_wgs84_to_gda2020.transform(latitude, longitude)
 
     return jsonify({
         'converted_gda2020': {
             'easting': transformed_point_gda2020[0],
             'northing': transformed_point_gda2020[1]
-        },
-     
         }
-    )
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)
