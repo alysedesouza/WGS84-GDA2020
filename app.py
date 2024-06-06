@@ -15,7 +15,7 @@ def convert_coordinates():
     longitude = float(data['longitude'])
 
     # Define source CRS (WGS84) and destination CRS (GDA2020 for the specified zone)
-    source_crs = 'EPSG:4326'
+    source_crs = 4326
     destination_crs = 7800 + zone
 
     # Perform WGS84 to GDA2020 conversion
